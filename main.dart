@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'services/theme_service.dart';
 import 'services/alarm_clock_service.dart';
+import 'services/firebase_service.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
@@ -23,7 +24,7 @@ import 'screens/userdashboard/settings_screen.dart';
 // ── Correct file names from your actual folder structure ──────────────────
 import 'screens/Motherhealthtracker/mother_health_screen.dart';
 import 'screens/Babyhealthtracker/baby_health_screen.dart';
-import 'screens/RecordsAndGraphs/records_and_graphs.dart';
+import 'screens/RecordsAndGraphs/records_and_graphs_screen.dart';
 import 'screens/reminders/reminders_screen.dart';
 
 void main() async {
@@ -34,16 +35,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 2. AlarmClockService — initializes the alarm engine
+  // 2. FirestoreService — enables offline persistence explicitly and
+  //    starts the connectivity listener that drives the OfflineBanner.
+  //    Must come after Firebase.initializeApp(), before runApp().
+  await FirestoreService.init();
+
+  // 3. AlarmClockService — initializes the alarm engine
   await AlarmClockService().init();
 
-  // 5. Portrait lock
+  // 4. Portrait lock
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // 6. Status bar
+  // 5. Status bar
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
